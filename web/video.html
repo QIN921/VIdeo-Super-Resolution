@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>视频播放器</title>
+    <style>
+        #videoPlayer {
+            width: 50%;
+        }
+    </style>
+</head>
+<body>
+    <h1>选择文件</h1>
+    <form id="fileForm">
+        <input type="file" name="fileInput" id="fileInput">
+        <label for="scaleSelect">放大倍数：</label>
+        <select id="scaleSelect">
+            <option value="1">原始大小</option>
+            <option value="2">2倍</option>
+            <option value="3">3倍</option>
+            <option value="4">4倍</option>
+        </select>
+        <button type="submit">上传</button>
+    </form>
+
+    <pre id="result"></pre>
+
+    <h1>视频播放器</h1>
+    <input type="file" id="videoFileInput">
+    <br>
+    <video id="videoPlayer" controls></video>
+
+    <script>
+        const videoFileInput = document.getElementById('videoFileInput');
+        const videoPlayer = document.getElementById('videoPlayer');
+        const result = document.getElementById('result');
+
+        videoFileInput.addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            const videoURL = URL.createObjectURL(file);
+            videoPlayer.src = videoURL;
+        });
+
+        function togglePlay() {
+            if (videoPlayer.paused || videoPlayer.ended) {
+                videoPlayer.play();
+            } else {
+                videoPlayer.pause();
+            }
+        }
+
+        function toggleFullScreen() {
+            if (videoPlayer.requestFullscreen) {
+                videoPlayer.requestFullscreen();
+            } else if (videoPlayer.mozRequestFullScreen) {
+                videoPlayer.mozRequestFullScreen();
+            } else if (videoPlayer.webkitRequestFullscreen) {
+                videoPlayer.webkitRequestFullscreen();
+            } else if (videoPlayer.msRequestFullscreen) {
+                videoPlayer.msRequestFullscreen();
+            }
+        }
+
+        videoPlayer.addEventListener('click', togglePlay);
+        videoPlayer.addEventListener('dblclick', toggleFullScreen);
+
+        const form = document.getElementById('fileForm');
+
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const fileInput = document.getElementById('fileInput');
+            
+            if (fileInput.files.length === 0) {
+                result.textContent = '请选择文件';
+                return;
+            }
+
+            const formData = new FormData();
+            const scaleSelect = document.getElementById('scaleSelect');
+            const selectedScale = scaleSelect.value;
+
+            formData.append('file', fileInput.files[0]);
+            formData.append('scale', selectedScale)
+
+            fetch('/upload_2', { // 修改为上传处理的URL
+                method: 'POST',
+                body: formData
+            }).then(response => response.text())
+              .then(data => {
+                  result.textContent = data;
+              });
+        });
+        
+    </script>
+</body>
+</html>
