@@ -54,7 +54,7 @@ def efficient():
     print("视频抽帧完成！")
 
     os.system(
-        fr'E:\python\RealBasicVSR-master\realcugan\realcugan-ncnn-vulkan.exe -i ./video/frame -s {selected_scale} -o ./video/output')
+        f'../realcugan/realcugan-ncnn-vulkan.exe -i ./video/frame -s {selected_scale} -o ./video/output')
 
     os.system(f"ffmpeg -i ./video/output/%05d.png -pix_fmt yuv420p -c:v libx264 ./video/output.mp4 -y")
     return f"已对 {filename} 进行超分，并保存到 output.mp4"
