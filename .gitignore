@@ -2,3 +2,7 @@
 *.png
 *.jpg
 *.pth
+hello.py
+web/client.py
+web/server.py
+
