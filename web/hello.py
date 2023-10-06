@@ -1,6 +1,8 @@
 import shutil
 from flask import Flask, request
+from flask_socketio import SocketIO
 import os
+from threading import Lock
 
 app = Flask(
     __name__,
@@ -8,6 +10,10 @@ app = Flask(
     static_folder='.',  # 虚拟资源入口
     static_url_path='',
 )
+thread = None
+thread_lock = Lock()
+socketio = SocketIO(app, cors_allowed_origins='*')
+connected_sids = set()
 
 
 def clear_folder(folder_path):
@@ -52,11 +58,12 @@ def efficient():
     clear_folder("./video/output")
     os.system(f"ffmpeg -i {file_input} ./video/frame/%05d.jpg -y")
     print("视频抽帧完成！")
-
+    socketio.emit("server_response_2", {'data': "视频抽帧完成"})
     os.system(
         f'../realcugan/realcugan-ncnn-vulkan.exe -i ./video/frame -s {selected_scale} -o ./video/output')
-
+    socketio.emit("server_response_2", {'data': "视频超分完成"})
     os.system(f"ffmpeg -i ./video/output/%05d.png -pix_fmt yuv420p -c:v libx264 ./video/output.mp4 -y")
+    socketio.emit('server_response_2', {'data': f"Realcugan超分{selected_scale}倍结果保存至./video/output.mp4"})
     return f"已对 {filename} 进行超分，并保存到 output.mp4"
 
 
@@ -78,11 +85,16 @@ def quality():
     # 视频抽帧
     os.system(f"ffmpeg -i {file_input} ./video/frame/%05d.jpg -y")
     print("视频抽帧完成！")
+    socketio.emit('server_response', {'data': "视频抽帧完成"})
     # 输入文件夹进行超分
     os.system("python ../inference_realbasicvsr.py ../configs/realbasicvsr_x4.py ../checkpoints/RealBasicVSR_x4.pth "
               "./video/frame ./video/output --max_seq_len 8")
+    socketio.emit('server_response', {'data': "视频超分完成！"})
     #  直接放大，方便对比效果
     os.system("ffmpeg -i ./video/frame/%05d.jpg -vf scale=iw*4:ih*4 ./video/direct/%05d.jpg -y")
+    socketio.emit('server_response', {'data': "视频抽帧结果保存至./video/frame"})
+    socketio.emit('server_response', {'data': "RealBasicVSR_x4超分结果保存至./video/output"})
+    socketio.emit('server_response', {'data': "FFmpeg直接放大结果保存至./video/direct"})
     return f"已对 {filename} 进行超分，并保存到 ./video/output"
 
 
@@ -92,5 +104,44 @@ def index():
         return "".join(f.readlines())
 
 
+# 后端程序
+# def background_thread():
+#     """
+#     该线程专门用来给前端发送消息
+#     :return:
+#     """
+#     num = 0
+#     while True:
+#         socketio.emit('server_response', {'data': num % 16 + 1})
+#         socketio.sleep(2)
+#         num += 1
+
+
+@socketio.on('connect')
+def on_connect():
+    connected_sids.add(request.sid)
+    print(f'{request.sid} 已连接')
+    # global thread
+    # with thread_lock:
+    #     print(thread)
+    #     if thread is None:
+    #         # 如果socket连接，则开启一个线程，专门给前端发送消息
+    #         thread = socketio.start_background_task(target=background_thread)
+
+
+@socketio.on('disconnect')
+def on_disconnect():
+    connected_sids.remove(request.sid)
+    print(f'{request.sid} 已断开')
+
+
+@socketio.on('message')
+def handle_message(message):
+    """收消息"""
+    data = message['data']
+    print(f'{request.sid} {data}')
+
+
 if __name__ == '__main__':
-    app.run()
+    # app.run()
+    socketio.run(app, host='127.0.0.1', port=8083, allow_unsafe_werkzeug=True, debug=True)

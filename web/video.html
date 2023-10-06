@@ -90,8 +90,27 @@
               .then(data => {
                   result.textContent = data;
               });
+        });   
+    </script>
+    <script src="jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.staticfile.org/socket.io/4.5.2/socket.io.min.js"></script>
+    <script>
+        var socket = io();
+        //记录上一次显示位置
+        var lastloc = null;
+        socket.on("connect", function () {
+
         });
         
+        socket.on("server_response_2", function (msg) {
+            //接收到后端发送过来的消息
+            var t = msg.data;
+            console.log('message: ' + t);
+            $('#messagecontainer').append(t +'<br/>');
+        });
+    
     </script>
+    <div id="messagecontainer" style="margin: 20px;"> </div>
+    <hr/>
 </body>
 </html>
