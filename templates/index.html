@@ -4,15 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>首页</title>
-    <link rel="stylesheet" href="./css/reset.css">
-    <link rel="stylesheet" href="./css/public.css">
-    <link rel="stylesheet" href="./css/index.css">
+    <link type="text/css" href="{{ url_for('static', filename='static/css/reset.css') }}" rel="stylesheet">
+    <link type="text/css" href="{{ url_for('static', filename='static/css/public.css') }}" rel="stylesheet">
+    <link type="text/css" href="{{ url_for('static', filename='static/css/index.css') }}" rel="stylesheet">
+
+    <!-- <link rel="stylesheet" href="./static/css/reset.css">
+    <link rel="stylesheet" href="./static/css/public.css">
+    <link rel="stylesheet" href="./static/css/index.css"> -->
 </head>
  
 <body>
     <div class="header_con">
         <h1>
-            <img src="./images/apple.svg" alt="">
+            <img src="../static/images/apple.svg" alt="">
         </h1>
         <form action="">
             <input type="text" class="search" value="SEARCH...">
@@ -27,8 +31,8 @@
                 <li class="margin-left"><a href="https://qin921.github.io/">个人主页</a></li>
                 <li><a href="#">HHHH</a></li>
                 <li><a href="#">HHHH</a></li>
-                <li><a href="video.html">视频播放器</a></li>
-                <li><a href="compare.html">图像对比</a></li>
+                <li><a href="templates/video.html">视频播放器</a></li>
+                <li><a href="templates/compare.html">图像对比</a></li>
                 <li><a href="#">HHHH</a></li>
                 <li><a href="#">HHHH</a></li>
                 <li><a href="https://cn.bing.com/">BING</a></li>
@@ -37,7 +41,7 @@
     </div>
     <div id="banner">
         <div class="banner_con">
-             <img src="./images/girl.svg">
+             <img src="../static/images/girl.svg">
         </div>
     </div>
 
