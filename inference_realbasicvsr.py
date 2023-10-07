@@ -10,6 +10,7 @@ from mmedit.core import tensor2img
 from tqdm import trange
 from realbasicvsr.models.builder import build_model
 
+
 VIDEO_EXTENSIONS = ('.mp4', '.mov')
 os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "max_split_size_mb:256"
 
