@@ -103,6 +103,8 @@
         const zoomOutBtn = document.getElementById('zoomOutBtn');
         const zoomBtn = document.getElementById('zoomBtn');
         let scaleFactor = 0.2;
+        var scrollLeft = 1220;
+        var scrollTop = 700;
 
         leftFolderUploadInput.addEventListener('change', (event) => {
             const files = Array.from(event.target.files);
@@ -152,6 +154,11 @@
                 image.style.transform = `scale(${scaleFactor})`;
                 previewDiv.innerHTML = '';
                 previewDiv.appendChild(image);
+                if (image.naturalWidth != 0) {
+                    scrollTop = Math.floor(image.naturalHeight * 5 / 14);
+                    scrollLeft = Math.floor(image.naturalWidth * 5 / 14);
+                    console.log(scrollLeft);
+                };
             };
             
             reader.readAsDataURL(file);

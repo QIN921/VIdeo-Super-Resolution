@@ -64,11 +64,9 @@ def efficient():
     print("视频抽帧完成！")
     socketio.emit("server_response_2", {'data': "视频抽帧完成"})
 
-    # os.system(f'./realcugan/realcugan-ncnn-vulkan.exe -i ./data/frame -s {selected_scale} -o ./data/output')
-    # print(f'./realcugan/realcugan-ncnn-vulkan.exe -i ./data/frame -s {selected_scale} -o ./data/output')
-    # 调用 .exe 文件并传递参数
-    process = subprocess.run(f'./realcugan/realcugan-ncnn-vulkan.exe -i ./data/frame -s {selected_scale} -o ./data/output',
-                             capture_output=True, text=True)
+    process = subprocess.run(
+        f'./realcugan/realcugan-ncnn-vulkan.exe -i ./data/frame -s {selected_scale} -o ./data/output',
+        capture_output=True, text=True)
     # 输出命令的输出和错误信息
     print(process.stdout)
     print(process.stderr)
