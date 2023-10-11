@@ -116,6 +116,7 @@ def main():
                         file_extension = os.path.splitext(filename)[1]
                         filename = filename.replace(file_extension, '.png')
                     mmcv.imwrite(output, f'{args.output_dir}/{filename}')
+
                 outputs = []
         else:
             if cuda_flag:

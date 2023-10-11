@@ -1,9 +1,10 @@
 import shutil
-from flask import Flask, request, render_template, url_for
+from flask import Flask, request, render_template, Response
 from flask_socketio import SocketIO
 import os
 from threading import Lock
 import subprocess
+import re
 
 app = Flask(
     __name__,
@@ -15,6 +16,8 @@ thread = None
 thread_lock = Lock()
 socketio = SocketIO(app, cors_allowed_origins='*')
 connected_sids = set()
+
+m3u8 = ''
 
 
 def clear_folder(folder_path):
@@ -45,8 +48,6 @@ def efficient():
     filename = file.filename
 
     selected_scale = int(request.form['scale'])  # 获取放大倍数
-    print(selected_scale)
-    print(type(selected_scale))
     if not selected_scale:
         print('无放大倍数')
         selected_scale = 2
@@ -60,28 +61,66 @@ def efficient():
     file_input = file_abs_path
     clear_folder("data/frame")
     clear_folder("data/output")
-    os.system(f"ffmpeg -i {file_input} ./data/frame/%05d.jpg -y")
-    print("视频抽帧完成！")
-    socketio.emit("server_response_2", {'data': "视频抽帧完成"})
+    clear_folder("data/m3u8")
+    clear_folder("data/m3u9")
 
     process = subprocess.run(
-        f'./realcugan/realcugan-ncnn-vulkan.exe -i ./data/frame -s {selected_scale} -o ./data/output',
+        f"ffmpeg -i {file_input} -c:a aac -c:v libx264 -force_key_frames \"expr:gte(t,n_forced*1)\" -f segment "
+        "-segment_list ./data/m3u8/output.m3u8 -segment_time 1 -r 25 -y ./data/m3u8/output%03d.ts ",
         capture_output=True, text=True)
-    # 输出命令的输出和错误信息
     print(process.stdout)
     print(process.stderr)
+
+    data = ''
+    matches = []
+    with open("./data/m3u8/output.m3u8", 'r') as f:
+        data = data.join(f.readlines())
+        pattern = re.compile(r'output\d+\.ts')
+        matches = pattern.findall(data)
+        for i in matches:
+            data = data.replace(i, './data/m3u9/' + i)
+
+    print(data)
+
+    global m3u8
+    m3u8 = ""
+    index = 5
+    count = 1.4
+
+    for i in matches:
+        os.system(f"ffmpeg -i ./data/m3u8/{i} ./data/frame/%05d.jpg -y")
+        process = subprocess.run(
+            f'./realcugan/realcugan-ncnn-vulkan.exe -i ./data/frame -s {selected_scale} -o ./data/output',
+            capture_output=True, text=True)
+        print(process.stdout)
+        print(process.stderr)
+        os.system(f"ffmpeg -i ./data/output/%05d.png -preset fast -r 25 "
+                  f" -muxdelay {count / 2} -c:v h264_qsv -t 1 ./data/m3u9/{i} -y")
+
+        m3u8 = '\n'.join(data.split('\n')[0:index + 2])
+        index += 2
+        count += 1
+
+        import time
+        time.sleep(0)
+
+    m3u8 = data
+
     socketio.emit("server_response_2", {'data': "视频超分完成"})
-    socketio.emit('server_response_2', {'data': f"Realcugan超分{selected_scale}倍结果保存至./data/output"})
+    # os.system(f"ffmpeg -i ./data/output/%05d.png -pix_fmt yuv420p -c:v h264_cuvid ./data/output.mp4 -y")
+    # os.system(f"ffmpeg -i ./data/frame/%05d.jpg -vf scale=iw*{selected_scale}:ih*{selected_scale} "
+    # f"./data/direct/%05d.jpg -y")
+    print(m3u8)
+    return f"已对 {filename} 进行超分"
 
-    os.system(f"ffmpeg -i ./data/output/%05d.png -pix_fmt yuv420p -c:v libx264 ./data/output.mp4 -y")
-    socketio.emit("server_response_2", {'data': "视频帧压缩为视频完成"})
-    socketio.emit('server_response_2', {'data': f"Realcugan超分{selected_scale}倍结果保存至./data/output.mp4"})
 
-    os.system(f"ffmpeg -i ./data/frame/%05d.jpg -vf scale=iw*{selected_scale}:ih*{selected_scale} "
-              f"./data/direct/%05d.jpg -y")
-    socketio.emit('server_response', {'data': f"FFmpeg直接放大{selected_scale}倍结果保存至./data/direct"})
-
-    return f"已对 {filename} 进行超分，并保存到 ./data/output.mp4"
+@app.route('/video')
+def video():
+    global m3u8
+    while m3u8 == '':
+        import time
+        time.sleep(1)
+    return Response(m3u8, mimetype='application/vnd.apple.mpegurl')
 
 
 @app.route("/upload_1", methods=['POST'])
@@ -111,8 +150,8 @@ def quality():
     socketio.emit('server_response', {'data': "RealBasicVSR_x4超分结果保存至./data/output"})
 
     os.system(f"ffmpeg -i ./data/output/%05d.png -pix_fmt yuv420p -c:v libx264 ./data/output.mp4 -y")
-    socketio.emit("server_response_2", {'data': "视频帧压缩为视频完成"})
-    socketio.emit('server_response_2', {'data': f"RealBasicVSR_x4超分倍结果保存至./data/output.mp4"})
+    socketio.emit("server_response", {'data': "视频帧压缩为视频完成"})
+    socketio.emit('server_response', {'data': f"RealBasicVSR_x4超分倍结果保存至./data/output.mp4"})
 
     #  直接放大，方便对比效果
     os.system("ffmpeg -i ./data/frame/%05d.jpg -vf scale=iw*4:ih*4 ./data/direct/%05d.jpg -y")

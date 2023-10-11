@@ -26,7 +26,11 @@
         }
 
         #videoPlayer {
-            width: 50%;
+            width: 70%;
+        }
+
+        #dplayer {
+            width: 70%;
         }
     </style>
 </head>
@@ -48,6 +52,23 @@
 
     <div id="messagecontainer" style="margin: 20px;"> </div>
     <hr/>
+
+    <h1>实时播放器</h1>
+    <div id="dplayer"></div>
+    <script src="https://cdn.bootcdn.net/ajax/libs/dplayer/1.27.1/DPlayer.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <script>
+        var src =
+            '/video' //放置你要直播的地址
+        const dp = new DPlayer({
+            container: document.getElementById('dplayer'),
+            live: true,
+            video: {
+                url: `${src}`,
+                type: 'hls',
+            },
+        });
+    </script>
 
     <h1>视频播放器</h1>
     <input type="file" id="videoFileInput">
@@ -135,7 +156,7 @@
     
     </script>
     
-    <h1>选择文件夹，将展示其中图片</h1>
+    <!-- <h1>选择文件夹，将展示其中图片</h1>
 
     <input type="file" id="leftFolderUpload" webkitdirectory directory multiple>
     <input type="file" id="rightFolderUpload" webkitdirectory directory multiple>
@@ -151,7 +172,7 @@
         <button id="zoomInBtn" onclick="zoomIn()">放大</button>
         <button id="zoomOutBtn" onclick="zoomOut()">缩小</button>
         <button id="zoomBtn" onclick="resetZoom()">适应</button>
-    </div>
+    </div> -->
 
     <script>
         let leftFileIndex = 0;
