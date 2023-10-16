@@ -88,13 +88,21 @@ def efficient():
     count = 1.4
 
     for i in matches:
-        os.system(f"ffmpeg -i ./data/m3u8/{i} ./data/frame/%05d.jpg -y")
-        process = subprocess.run(
-            f'./realcugan/realcugan-ncnn-vulkan.exe -i ./data/frame -s {selected_scale} -o ./data/output',
-            capture_output=True, text=True)
+        # os.system(f"ffmpeg -i ./data/m3u8/{i} ./data/frame/%05d.jpg -y")
+        # process = subprocess.run(
+        #     f'./realcugan/realcugan-ncnn-vulkan.exe -i ./data/frame -s {selected_scale} -o ./data/output',
+        #     capture_output=True, text=True)
+        # print(process.stdout)
+        # print(process.stderr)
+        # os.system(f"ffmpeg -i ./data/output/%05d.png -preset fast -r 25 "
+        #           f" -muxdelay {count / 2} -c:v h264_qsv -t 1 ./data/m3u9/{i} -y")
+
+        process = subprocess.run(f'./Anime4KCPP_CLI/Anime4KCPP_CLI.exe -i ./data/m3u8/{i} -z {selected_scale}  -v -wq '
+                                 f'-H -o ./data/m3u8/{i[:-3] + ".mp4"}')
         print(process.stdout)
         print(process.stderr)
-        os.system(f"ffmpeg -i ./data/output/%05d.png -preset fast -r 25 "
+
+        os.system(f"ffmpeg -i ./data/m3u8/{i[:-3] + '.mp4'} -preset fast -r 25 "
                   f" -muxdelay {count / 2} -c:v h264_qsv -t 1 ./data/m3u9/{i} -y")
 
         m3u8 = '\n'.join(data.split('\n')[0:index + 2])

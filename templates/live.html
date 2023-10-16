@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Video Hub</title>
+    <link type="text/css" href="../static/css/style.css" rel="stylesheet">
+    <link type="text/javascript" href="../static/js/script.js" rel="stylesheet">
+    <link type="text/javascript" href="../static/js/live.js" rel="stylesheet">
+    <link type="text/javascript" href="../static/js/jquery-3.7.1.min.js" rel="stylesheet">
+  </head>
+  <body>
+    <!------------- !NAVBAR------------->
+    <nav class="flex-div">
+      <div class="nav-left flex-div">
+        <img src="../static/images/menu.png" alt="Menu" class="menu-icon" />
+        <img src="../static/images/logo.png" alt="Logo" class="logo" />
+      </div>
+
+      <div class="nav-middle flex-div">
+        <div class="search-box flex-div">
+          <input type="text" placeholder="Search" />
+          <img src="../static/images/search.png" alt="Search" />
+        </div>
+        <img src="../static/images/voice-search.png" alt="Microphone" class="mic-icon" />
+      </div>
+
+      <div class="nav-right flex-div">
+        <img src="../static/images/upload.png" alt="Upload" />
+        <img src="../static/images/more.png" alt="More" />
+        <img src="../static/images/notification.png" alt="notification" />
+        <img src="../static/images/zcq.jpg" alt="ZCQ" class="user-icon" />
+      </div>
+    </nav>
+
+    <!------------- !SIDEBAR------------->
+    <div class="sidebar">
+      <div class="shortcut-links">
+        <a href="index.html">
+          <img src="../static/images/home.png" alt="Home" />
+          <p>Home</p>
+        </a>
+        <a href="live.html">
+          <img src="../static/images/explore.png" alt="live" />
+          <p>Live</p>
+        </a>
+        <a href="compare.html">
+          <img src="../static/images/subscriprion.png" alt="compare" />
+          <p>Compare</p> 
+        </a>
+        <!-- <a href=""
+          ><img src="../static/images/library.png" alt="library" />
+          <p>Library</p></a
+        >
+        <a href=""
+          ><img src="../static/images/history.png" alt="history" />
+          <p>History</p></a
+        >
+        <a href=""
+          ><img src="../static/images/playlist.png" alt="playlist" />
+          <p>Playlist</p></a
+        >
+        <a href=""
+          ><img src="../static/images/messages.png" alt="messages" />
+          <p>Messages</p></a
+        >
+        <a href=""
+          ><img src="../static/images/show-more.png" alt="Show-more" />
+          <p>Show More</p></a
+        > -->
+        <hr />
+      </div>
+      <div class="subscribed-list">
+        <h3>Creators</h3>
+        <a href="">
+          <img src="../static/images/zcq.jpg" alt="Show-more" />
+          <p>Chuqin Zhou</p> 
+        </a>
+        <a href="">
+          <img src="../static/images/xyj.jpg" alt="Show-more" />
+          <p>Yujie Xing</p>
+        </a>
+        <a href="">
+          <img src="../static/images/cp.jpg" alt="Show-more" />
+          <p>Peng Chen</p>
+        </a>
+        <a href="">
+          <img src="../static/images/cq.jpg" alt="Show-more" />
+          <p>Qian Chen</p>
+        </a>
+        <a href="">
+          <img src="../static/images/wzx.jpg" alt="Show-more" />
+          <p>Zixuan Wei</p></a
+        >
+      </div>
+    </div>
+
+    <!-- --------------MAIN------------- -->
+
+    <div class="container">
+        <h1>Choose the video to be super-resolution</h1>
+        <form id="fileForm">
+            <label class="file">
+                Video File
+                <input type="file" name="fileInput" id="fileInput" style="display: none;" />
+            </label>
+            <select id="scaleSelect" class="shortselect">
+                <option value="1">1x</option>
+                <option value="2">2x</option>
+                <option value="3">3x</option>
+                <option value="4">4x</option>
+            </select>
+            <button type="submit" class="file">上传</button>
+        </form>
+
+        <div id="messagecontainer" class="messagecontainer"> </div>
+        <hr/>
+
+        <h1>Live video</h1>
+        <div id="dplayer"></div>
+        
+    </div>
+    <script src="https://cdn.bootcdn.net/ajax/libs/dplayer/1.27.1/DPlayer.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <script src="../static/js/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.staticfile.org/socket.io/4.5.2/socket.io.min.js"></script>
+    <script src="../static/js/live.js"></script>
+    <script src="../static/js/script.js"></script>
+  </body>
+</html>

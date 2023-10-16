@@ -1,301 +1,144 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>图片展示</title>
-    <style>
-        #imageContainer {
-            display: flex;
-        }
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Video Hub</title>
+    <link type="text/css" href="../static/css/style.css" rel="stylesheet">
+    <link type="text/javascript" href="../static/js/script.js" rel="stylesheet">
+    <link type="text/javascript" href="../static/js/compare.js" rel="stylesheet">
+    <link type="text/javascript" href="../static/js/jquery-3.7.1.min.js" rel="stylesheet">
+  </head>
+  <body>
+    <!------------- !NAVBAR------------->
+    <nav class="flex-div">
+        <div class="nav-left flex-div">
+        <img src="../static/images/menu.png" alt="Menu" class="menu-icon" />
+        <img src="../static/images/logo.png" alt="Logo" class="logo" />
+        </div>
 
-        .preview-container {
-            overflow: auto;
-            height: 450px;
-            width: 800px;
-        }
+        <div class="nav-middle flex-div">
+        <div class="search-box flex-div">
+            <input type="text" placeholder="Search" />
+            <img src="../static/images/search.png" alt="Search" />
+        </div>
+        <img src="../static/images/voice-search.png" alt="Microphone" class="mic-icon" />
+        </div>
 
-        .preview-image {
-            max-width: 100%;
-            max-height: 100%;
-            cursor: grab;
-        }
+        <div class="nav-right flex-div">
+        <img src="../static/images/upload.png" alt="Upload" />
+        <img src="../static/images/more.png" alt="More" />
+        <img src="../static/images/notification.png" alt="notification" />
+        <img src="../static/images/zcq.jpg" alt="ZCQ" class="user-icon" />
+        </div>
+    </nav>
 
-        #controls {
-            clear: both;
-            padding: 10px;
-        }
-
-        #videoPlayer {
-            width: 50%;
-        }
-    </style>
-</head>
-<body>
-    <h1>选择视频文件</h1>
-    <form id="fileForm">
-        <input type="file" name="fileInput" id="fileInput">
-        <button type="submit">上传</button>
-    </form>
-
-    <pre id="result"></pre>
-
-    <div id="messagecontainer" style="margin: 20px;"> </div>
-    <hr/>
-
-    <h1>选择文件夹，将展示其中图片</h1>
-
-    <input type="file" id="leftFolderUpload" webkitdirectory directory multiple>
-    <input type="file" id="rightFolderUpload" webkitdirectory directory multiple>
-
-    <div id="imageContainer" >
-        <div id="leftPreview" class="preview-container" onscroll="syncScroll('left')"></div>
-        <div id="rightPreview" class="preview-container" onscroll="syncScroll('right')"></div>
+    <!------------- !SIDEBAR------------->
+    <div class="sidebar">
+      <div class="shortcut-links">
+        <a href="index.html">
+          <img src="../static/images/home.png" alt="Home" />
+          <p>Home</p>
+        </a>
+        <a href="live.html">
+          <img src="../static/images/explore.png" alt="live" />
+          <p>Live</p>
+        </a>
+        <a href="compare.html">
+          <img src="../static/images/subscriprion.png" alt="compare" />
+          <p>Compare</p> 
+        </a>
+        <!-- <a href=""
+          ><img src="../static/images/library.png" alt="library" />
+          <p>Library</p></a
+        >
+        <a href=""
+          ><img src="../static/images/history.png" alt="history" />
+          <p>History</p></a
+        >
+        <a href=""
+          ><img src="../static/images/playlist.png" alt="playlist" />
+          <p>Playlist</p></a
+        >
+        <a href=""
+          ><img src="../static/images/messages.png" alt="messages" />
+          <p>Messages</p></a
+        >
+        <a href=""
+          ><img src="../static/images/show-more.png" alt="Show-more" />
+          <p>Show More</p></a
+        > -->
+        <hr />
+      </div>
+      <div class="subscribed-list">
+        <h3>Creators</h3>
+        <a href="">
+          <img src="../static/images/zcq.jpg" alt="Show-more" />
+          <p>Chuqin Zhou</p> 
+        </a>
+        <a href="">
+          <img src="../static/images/xyj.jpg" alt="Show-more" />
+          <p>Yujie Xing</p>
+        </a>
+        <a href="">
+          <img src="../static/images/cp.jpg" alt="Show-more" />
+          <p>Peng Chen</p>
+        </a>
+        <a href="">
+          <img src="../static/images/cq.jpg" alt="Show-more" />
+          <p>Qian Chen</p>
+        </a>
+        <a href="">
+          <img src="../static/images/wzx.jpg" alt="Show-more" />
+          <p>Zixuan Wei</p>
+        </a>
+      </div>
     </div>
 
-    <div id="controls">
-        <button id="previousBtn" onclick="showPrevious()">上一张</button>
-        <button id="nextBtn" onclick="showNext()">下一张</button>
-        <button id="zoomInBtn" onclick="zoomIn()">放大</button>
-        <button id="zoomOutBtn" onclick="zoomOut()">缩小</button>
-        <button id="zoomBtn" onclick="resetZoom()">适应</button>
+    <!-- --------------MAIN------------- -->
+
+    <div class="container">
+        <h1>Choose the video to be super-resolution</h1>
+        <form id="fileForm">
+            <label class="file">
+                Video File
+                <input type="file" name="fileInput" id="fileInput" style="display: none;" />
+            </label>
+            <button type="submit" class="file">Upload</button>
+        </form>
+
+        <div id="messagecontainer" class="messagecontainer"> </div>
+        <hr/>
+
+        <h1>Choose the folder to be displayed</h1>
+
+        <label class="file">
+            Left
+            <input type="file" id="leftFolderUpload" style="display: none;" webkitdirectory directory multiple>
+        </label>
+        <label class="file">
+            Right
+            <input type="file" id="rightFolderUpload" style="display: none;" webkitdirectory directory multiple>
+        </label>
+
+        <div id="imageContainer" class="imageContainer">
+            <div id="leftPreview" class="preview-container" onscroll="syncScroll('left')"></div>
+            <div id="rightPreview" class="preview-container" onscroll="syncScroll('right')"></div>
+        </div>
+
+        <div id="controls">
+            <button id="previousBtn" onclick="showPrevious()" class="file">上一张</button>
+            <button id="nextBtn" onclick="showNext()" class="file">下一张</button>
+            <button id="zoomInBtn" onclick="zoomIn()" class="file">放大</button>
+            <button id="zoomOutBtn" onclick="zoomOut()" class="file">缩小</button>
+            <button id="zoomBtn" onclick="resetZoom()" class="file">适应</button>
+        </div>
     </div>
 
-    <script>
-        // 选择待超分文件
-        const result = document.getElementById('result');
-        const form = document.getElementById('fileForm');
-
-        form.addEventListener('submit', function(event) {
-            event.preventDefault();
-
-            const fileInput = document.getElementById('fileInput');
-            
-            if (fileInput.files.length === 0) {
-                result.textContent = '请选择文件';
-                return;
-            }
-
-            const formData = new FormData();
-
-            formData.append('file', fileInput.files[0]);
-
-            fetch('/upload_1', { // 修改为上传处理的URL
-                method: 'POST',
-                body: formData
-            }).then(response => response.text())
-              .then(data => {
-                  result.textContent = data;
-              });
-        });
-
-        let leftFileIndex = 0;
-        let rightFileIndex = 0;
-        let leftImageFiles = [];
-        let rightImageFiles = [];
-
-        const leftFolderUploadInput = document.getElementById('leftFolderUpload');
-        const rightFolderUploadInput = document.getElementById('rightFolderUpload');
-        const leftPreviewDiv = document.getElementById('leftPreview');
-        const rightPreviewDiv = document.getElementById('rightPreview');
-        const previousBtn = document.getElementById('previousBtn');
-        const nextBtn = document.getElementById('nextBtn');
-        const zoomInBtn = document.getElementById('zoomInBtn');
-        const zoomOutBtn = document.getElementById('zoomOutBtn');
-        const zoomBtn = document.getElementById('zoomBtn');
-        let scaleFactor = 0.2;
-        var scrollLeft = 1220;
-        var scrollTop = 700;
-
-        leftFolderUploadInput.addEventListener('change', (event) => {
-            const files = Array.from(event.target.files);
-            leftImageFiles = files.filter(file => file.type.startsWith('image/'));
-            leftImageFiles.sort((a, b) => getImageIndex(a) - getImageIndex(b));  // 按照图片索引进行排序
-            leftFileIndex = 0;
-            showImage('left');      
-        });
-
-        rightFolderUploadInput.addEventListener('change', (event) => {
-            const files = Array.from(event.target.files);
-            rightImageFiles = files.filter(file => file.type.startsWith('image/'));
-            rightImageFiles.sort((a, b) => getImageIndex(a) - getImageIndex(b));  // 按照图片索引进行排序
-            rightFileIndex = 0;
-            showImage('right');
-        });
-
-        function getImageIndex(file) {
-            const fileName = file.name.toLowerCase();
-            const match = fileName.match(/frame_(\d+)\.(png|jpg)/);
-            return match ? parseInt(match[1]) : -1;
-        }
-
-        function showImage(side) {
-            let imageFiles, fileIndex, previewDiv;
-            if (side === 'left') {
-                imageFiles = leftImageFiles;
-                fileIndex = leftFileIndex;
-                previewDiv = leftPreviewDiv;
-            } else {
-                imageFiles = rightImageFiles;
-                fileIndex = rightFileIndex;
-                previewDiv = rightPreviewDiv;
-            }
-        
-            if (imageFiles.length === 0) {
-                previewDiv.innerHTML = '没有选择图片文件夹或文件夹内没有图片';
-                return;
-            }
-            
-            const file = imageFiles[fileIndex];
-            const reader = new FileReader();
-            reader.onload = function() {
-                const image = new Image();
-                image.src = reader.result;
-                image.id = 'preview-image';
-                image.style.transform = `scale(${scaleFactor})`;
-                previewDiv.innerHTML = '';
-                previewDiv.appendChild(image);
-                if (image.naturalWidth != 0) {
-                    scrollTop = Math.floor(image.naturalHeight * 5 / 14);
-                    scrollLeft = Math.floor(image.naturalWidth * 5 / 14);
-                    console.log(scrollLeft);
-                };
-            };
-            
-            reader.readAsDataURL(file);
-            previousBtn.disabled = (fileIndex === 0);
-            nextBtn.disabled = (fileIndex === imageFiles.length - 1);
-        }
-
-        function showPrevious() {
-            if (leftFileIndex > 0) {
-                leftFileIndex--;
-                showImage('left');
-            }
-            if (rightFileIndex > 0) {
-                rightFileIndex--;
-                showImage('right');
-            }
-        }
-
-        function showNext() {
-            if (leftFileIndex < leftImageFiles.length - 1) {
-                leftFileIndex++;
-                showImage('left');
-            }
-            if (rightFileIndex < rightImageFiles.length - 1) {
-                rightFileIndex++;
-                showImage('right');
-            }
-        }
-
-        function zoomIn() {
-            scaleFactor += 0.1;
-            applyTransform('left');
-            applyTransform('right'); // 调用applyTransform函数对右边图片进行缩放
-        }
-
-        function zoomOut() {
-            scaleFactor -= 0.1;
-            applyTransform('left');
-            applyTransform('right'); // 调用applyTransform函数对右边图片进行缩放
-        }
-
-        function resetZoom() {
-            scaleFactor = 0.2;
-            
-            applyTransform('left');
-            leftPreviewDiv.scrollTop = 747;
-            leftPreviewDiv.scrollLeft = 1328;
-
-            applyTransform('right');
-            rightPreviewDiv.scrollTop = 747;
-            rightPreviewDiv.scrollLeft = 1328; 
-        }
-
-        function applyTransform(side) {
-            const image = document.querySelector(`#${side}Preview #preview-image`);
-            if (image != null) {  // 如果该侧存在图片，则进行缩放操作
-                image.style.transform = `scale(${scaleFactor})`;
-            }
-        }
-
-        function syncScroll(side) {
-            const leftScrollTop = leftPreviewDiv.scrollTop;
-            const leftScrollLeft = leftPreviewDiv.scrollLeft;
-            const rightPreviewDiv = document.getElementById('rightPreview');
-            
-            if (side === 'left') {
-                rightPreviewDiv.scrollTop = leftScrollTop;
-                rightPreviewDiv.scrollLeft = leftScrollLeft;
-            } else {
-                leftPreviewDiv.scrollTop = rightPreviewDiv.scrollTop;
-                leftPreviewDiv.scrollLeft = rightPreviewDiv.scrollLeft;
-            }
-        }
-
-    </script>
-    
-    <!-- 前后端交互 -->
-    <script src="../static/jquery-3.7.1.min.js"></script>
+    <script src="../static/js/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.staticfile.org/socket.io/4.5.2/socket.io.min.js"></script>
-    <script>
-        var socket = io();
-        //记录上一次显示位置
-        var lastloc = null;
-        socket.on("connect", function () {
-
-        });
-        
-        socket.on("server_response", function (msg) {
-            //接收到后端发送过来的消息
-            var t = msg.data;
-            console.log('message: ' + t);
-            $('#messagecontainer').append(t +'<br/>');
-        });
-    
-    </script>
-
-    <hr/>
-
-    <h1>视频播放器</h1>
-    <input type="file" id="videoFileInput">
-    <br>
-    <video id="videoPlayer" controls></video>
-
-    <script>
-        const videoFileInput = document.getElementById('videoFileInput');
-        const videoPlayer = document.getElementById('videoPlayer');
-
-        videoFileInput.addEventListener('change', function(event) {
-            const file = event.target.files[0];
-            const videoURL = URL.createObjectURL(file);
-            videoPlayer.src = videoURL;
-        });
-
-        function togglePlay() {
-            if (videoPlayer.paused || videoPlayer.ended) {
-                videoPlayer.play();
-            } else {
-                videoPlayer.pause();
-            }
-        }
-
-        function toggleFullScreen() {
-            if (videoPlayer.requestFullscreen) {
-                videoPlayer.requestFullscreen();
-            } else if (videoPlayer.mozRequestFullScreen) {
-                videoPlayer.mozRequestFullScreen();
-            } else if (videoPlayer.webkitRequestFullscreen) {
-                videoPlayer.webkitRequestFullscreen();
-            } else if (videoPlayer.msRequestFullscreen) {
-                videoPlayer.msRequestFullscreen();
-            }
-        }
-
-        videoPlayer.addEventListener('click', togglePlay);
-        videoPlayer.addEventListener('dblclick', toggleFullScreen);
-    </script>
-    
-    
-</body>
+    <script src="../static/js/compare.js"></script>
+    <script src="../static/js/script.js"></script>
+  </body>
 </html>

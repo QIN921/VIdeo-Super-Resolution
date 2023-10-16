@@ -1,6 +1,10 @@
 *.mp4
-*.png
-*.jpg
+data/direct/*.png
+data/direct/*.jpg
+data/output/*.png
+data/output/*.jpg
+data/frame/*.png
+data/frame/*.jpg
 *.pth
 *.ts
 *.m3u8
