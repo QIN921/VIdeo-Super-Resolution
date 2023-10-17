@@ -5,6 +5,7 @@ import os
 from threading import Lock
 import subprocess
 import re
+from realbasicvsr.inference_realbasicvsr import realbasicvsr
 
 app = Flask(
     __name__,
@@ -152,8 +153,9 @@ def quality():
     socketio.emit('server_response', {'data': "视频抽帧完成"})
 
     # 输入文件夹进行超分
-    os.system("python ./realbasicvsr/inference_realbasicvsr.py ./realbasicvsr/configs/realbasicvsr_x4.py "
-              "./realbasicvsr/checkpoints/RealBasicVSR_x4.pth ./data/frame ./data/output --max_seq_len 8")
+    # os.system("python ./realbasicvsr/inference_realbasicvsr.py ./realbasicvsr/configs/realbasicvsr_x4.py "
+    #           "./realbasicvsr/checkpoints/RealBasicVSR_x4.pth ./data/frame ./data/output --max_seq_len 8")
+    realbasicvsr(socketio)
     socketio.emit('server_response', {'data': "视频超分完成"})
     socketio.emit('server_response', {'data': "RealBasicVSR_x4超分结果保存至./data/output"})
 

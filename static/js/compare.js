@@ -184,3 +184,15 @@ socket.on("server_response", function (msg) {
     console.log('message: ' + t);
     $('#messagecontainer').append(t +'<br/>');
 });
+
+socket.on("server_response_num", function (msg) {
+    //接收到后端发送过来的消息
+    var t = msg.data;
+    console.log('process: ' + t);
+    var progressBar = document.getElementById("progress");
+
+    // 计算进度百分比
+    var progressPercent = t * 100;
+    // 更新进度条宽度
+    progressBar.style.width = progressPercent + "%";
+});
