@@ -37,15 +37,15 @@
     <!------------- !SIDEBAR------------->
     <div class="sidebar">
       <div class="shortcut-links">
-        <a href="index.html">
+        <a href="/templates/index.html">
           <img src="../static/images/home.png" alt="Home" />
           <p>Home</p>
         </a>
-        <a href="live.html">
+        <a href="/templates/live.html">
           <img src="../static/images/explore.png" alt="live" />
           <p>Live</p>
         </a>
-        <a href="compare.html">
+        <a href="/templates/compare.html">
           <img src="../static/images/subscriprion.png" alt="compare" />
           <p>Compare</p> 
         </a>
@@ -106,9 +106,14 @@
                 <input type="file" name="fileInput" id="fileInput" style="display: none;" />
             </label>
             <button type="submit" class="file">Upload</button>
+            <div id="videosize" class="videosize" onclick="clearContent()"></div>
         </form>
 
         <div id="messagecontainer" class="messagecontainer"> </div>
+        <div class="progress-cir">
+          <div class="progress" id="progress"></div>
+        </div>
+        
         <hr/>
 
         <h1>Choose the folder to be displayed</h1>

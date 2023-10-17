@@ -5,6 +5,9 @@ import os
 from threading import Lock
 import subprocess
 import re
+import cv2
+from realbasicvsr.inference_realbasicvsr import realbasicvsr
+
 
 app = Flask(
     __name__,
@@ -59,10 +62,15 @@ def efficient():
 
     # 以文件绝对地址代替上传文件内容
     file_input = file_abs_path
-    clear_folder("data/frame")
+    # clear_folder("data/frame")
     clear_folder("data/output")
     clear_folder("data/m3u8")
     clear_folder("data/m3u9")
+
+    cap = cv2.VideoCapture(file_input)
+    frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+    frame_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+    socketio.emit("video_size_2", {'data': f"Turn video of {frame_width}x{frame_height} into {frame_width*selected_scale}x{frame_height*selected_scale}"})
 
     process = subprocess.run(
         f"ffmpeg -i {file_input} -c:a aac -c:v libx264 -force_key_frames \"expr:gte(t,n_forced*1)\" -f segment "
@@ -135,7 +143,7 @@ def video():
 def quality():
     if 'file' not in request.files:
         return "没有选择文件"
-
+    
     file = request.files['file']
     filename = file.filename
     # 保存文件到指定目录
@@ -148,12 +156,17 @@ def quality():
     clear_folder("data/output")
     # 视频抽帧
     os.system(f"ffmpeg -i {file_input} ./data/frame/%05d.jpg -y")
-    print("视频抽帧完成！")
+    
+    img = cv2.imread('./data/frame/00001.jpg', cv2.IMREAD_COLOR)
+    # print('Image size: {} x {}'.format(img.shape[1], img.shape[0]))
+    socketio.emit("video_size", {'data': f"Turn video of {img.shape[1]}x{img.shape[0]} into {img.shape[1]*4}x{img.shape[0]*4}"})
+    # print("视频抽帧完成！")
     socketio.emit('server_response', {'data': "视频抽帧完成"})
 
     # 输入文件夹进行超分
-    os.system("python ./realbasicvsr/inference_realbasicvsr.py ./realbasicvsr/configs/realbasicvsr_x4.py "
-              "./realbasicvsr/checkpoints/RealBasicVSR_x4.pth ./data/frame ./data/output --max_seq_len 8")
+    # os.system("python ./realbasicvsr/inference_realbasicvsr.py ./realbasicvsr/configs/realbasicvsr_x4.py "
+    #           "./realbasicvsr/checkpoints/RealBasicVSR_x4.pth ./data/frame ./data/output --max_seq_len 8")
+    realbasicvsr(socketio)
     socketio.emit('server_response', {'data': "视频超分完成"})
     socketio.emit('server_response', {'data': "RealBasicVSR_x4超分结果保存至./data/output"})
 

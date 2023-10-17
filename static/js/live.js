@@ -48,3 +48,14 @@ socket.on("server_response_2", function (msg) {
     console.log('message: ' + t);
     $('#messagecontainer').append(t +'<br/>');
 });
+
+socket.on("video_size_2", function (msg) {
+    //接收到后端发送过来的消息
+    var t = msg.data;
+    console.log('size: ' + t);
+    $('#videosize').append(t +'<br/>');
+});
+
+function clearContent() {
+    document.getElementById('videosize').innerHTML = "";
+}

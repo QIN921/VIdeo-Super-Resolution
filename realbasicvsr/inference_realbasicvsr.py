@@ -8,7 +8,7 @@ import torch
 from mmcv.runner import load_checkpoint
 from mmedit.core import tensor2img
 from tqdm import trange
-from realbasicvsr.models.builder import build_model
+from .models.builder import build_model
 
 
 VIDEO_EXTENSIONS = ('.mp4', '.mov')
@@ -18,22 +18,22 @@ os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "max_split_size_mb:256"
 def parse_args():
     parser = argparse.ArgumentParser(
         description='Inference script of RealBasicVSR')
-    parser.add_argument('config', help='test config file path')
-    parser.add_argument('checkpoint', help='checkpoint file')
-    parser.add_argument('input_dir', help='directory of the input video')
-    parser.add_argument('output_dir', help='directory of the output video')
+    parser.add_argument('--config', default='./realbasicvsr/configs/realbasicvsr_x4.py', required=False, help='test config file path')
+    parser.add_argument('--checkpoint', default='./realbasicvsr/checkpoints/RealBasicVSR_x4.pth', required=False, help='checkpoint file')
+    parser.add_argument('--input_dir', default='./data/frame',required=False,  help='directory of the input video')
+    parser.add_argument('--output_dir', default='./data/output',required=False,  help='directory of the output video')
     parser.add_argument(
         '--max_seq_len',
         type=int,
-        default=None,
+        default=8,required=False,
         help='maximum sequence length to be processed')
     parser.add_argument(
         '--is_save_as_png',
         type=bool,
-        default=True,
+        default=True,required=False,
         help='whether to save as png')
     parser.add_argument(
-        '--fps', type=float, default=25, help='FPS of the output video')
+        '--fps', type=float, default=25,required=False,  help='FPS of the output video')
     args = parser.parse_args()
 
     return args
@@ -70,7 +70,7 @@ def init_model(config, checkpoint=None):
     return model
 
 
-def main():
+def realbasicvsr(socktio):
     # 输入输出只是文件夹
     args = parse_args()
 
@@ -116,7 +116,7 @@ def main():
                         file_extension = os.path.splitext(filename)[1]
                         filename = filename.replace(file_extension, '.png')
                     mmcv.imwrite(output, f'{args.output_dir}/{filename}')
-
+                    socktio.emit('server_response_num', {'data': (i+j+1) / inputs.size(1)})
                 outputs = []
         else:
             if cuda_flag:
@@ -130,6 +130,3 @@ def main():
                     filename = filename.replace(file_extension, '.png')
                 mmcv.imwrite(output, f'{args.output_dir}/{filename}')
 
-
-if __name__ == '__main__':
-    main()
