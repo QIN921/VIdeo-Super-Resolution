@@ -207,3 +207,26 @@ socket.on("video_size", function (msg) {
 function clearContent() {
     document.getElementById('videosize').innerHTML = "";
 }
+
+socket.on("server_response_num", function (msg) {
+    //接收到后端发送过来的消息
+    var t = msg.data;
+    console.log('process: ' + t);
+    var progressBar = document.getElementById("progress");
+
+    // 计算进度百分比
+    var progressPercent = t * 100;
+    // 更新进度条宽度
+    progressBar.style.width = progressPercent + "%";
+});
+
+socket.on("video_size", function (msg) {
+    //接收到后端发送过来的消息
+    var t = msg.data;
+    console.log('size: ' + t);
+    $('#videosize').append(t +'<br/>');
+});
+
+function clearContent() {
+    document.getElementById('videosize').innerHTML = "";
+}
