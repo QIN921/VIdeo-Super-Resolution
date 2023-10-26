@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Video Hub</title>
     <link type="text/css" href="../static/css/style.css" rel="stylesheet">
+    <link type="text/javascript" href="/clean.js" rel="stylesheet">
     <link type="text/javascript" href="../static/js/script.js" rel="stylesheet">
     <link type="text/javascript" href="../static/js/live.js" rel="stylesheet">
     <link type="text/javascript" href="../static/js/jquery-3.7.1.min.js" rel="stylesheet">
@@ -15,7 +16,9 @@
     <nav class="flex-div">
       <div class="nav-left flex-div">
         <img src="../static/images/menu.png" alt="Menu" class="menu-icon" />
-        <img src="../static/images/logo.png" alt="Logo" class="logo" />
+        <a href="/templates/login.html">
+          <img src="../static/images/logo.png" alt="Logo" class="logo" />
+        </a>
       </div>
 
       <div class="nav-middle flex-div">
@@ -37,7 +40,7 @@
     <!------------- !SIDEBAR------------->
     <div class="sidebar">
       <div class="shortcut-links">
-        <a href="/templates/index.html">
+        <a href="/templates/home.html">
           <img src="../static/images/home.png" alt="Home" />
           <p>Home</p>
         </a>
@@ -73,26 +76,26 @@
       </div>
       <div class="subscribed-list">
         <h3>Creators</h3>
-        <a href="">
+        <a href="https://github.com/QIN921">
           <img src="../static/images/zcq.jpg" alt="Show-more" />
           <p>Chuqin Zhou</p> 
         </a>
-        <a href="">
+        <a href="https://blog.horrordor.tk/index.html">
           <img src="../static/images/xyj.jpg" alt="Show-more" />
           <p>Yujie Xing</p>
         </a>
-        <a href="">
+        <a href="https://github.com/Eynnzerr">
           <img src="../static/images/cp.jpg" alt="Show-more" />
           <p>Peng Chen</p>
         </a>
-        <a href="">
+        <a href="https://github.com/RulelessProgrammer">
           <img src="../static/images/cq.jpg" alt="Show-more" />
           <p>Qian Chen</p>
         </a>
         <a href="">
           <img src="../static/images/wzx.jpg" alt="Show-more" />
-          <p>Zixuan Wei</p></a
-        >
+          <p>Zixuan Wei</p>
+        </a>
       </div>
     </div>
 
@@ -128,5 +131,6 @@
     <script src="https://cdn.staticfile.org/socket.io/4.5.2/socket.io.min.js"></script>
     <script src="../static/js/live.js"></script>
     <script src="../static/js/script.js"></script>
+    <script src="/clean.js"></script>
   </body>
 </html>

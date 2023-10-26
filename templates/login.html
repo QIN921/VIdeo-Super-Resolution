@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>login</title>
+    <link rel="stylesheet"
+        href="https://fonts.googlefonts.cn/css?family=Hanalei+Fill|Kirang+Haerang|Pacifico|Permanent+Marker|Shadows+Into+Light">
+    <link type="text/javascript" href="../static/js/login.js" rel="stylesheet">
+    <link type="text/css" href="../static/css/login.css" rel="stylesheet">
+    <link type="text/css" href="../static/css/login.css" rel="stylesheet">
+    <script src="https://lib.baomitu.com/typed.js/latest/typed.min.js"></script>
+    <script src="https://libs.baidu.com/jquery/2.1.4/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/webfont/1.6.28/webfontloader.js"></script>
+</head>
+
+<body>
+    <div id="content">
+        <div id="login_form">
+            <div class="login_title">
+                <span id="typed"></span>
+            </div>
+            <form action="">
+                <div id="login_content">
+                    <br>
+                    <input type="text" placeholder="请输入账号" name="username" class="text" id="username"/>
+                    <br>
+                    <input type="password" placeholder="请输入密码" name="password" class="text" id="password"/>
+                    <br>
+                    <div id="canvas-input">
+                        <input type="text" placeholder="请输入验证码" name="vcode" id="vcode" />
+                        <div id="icode" style="position:relative ;height: 35px;margin-top:-35px; margin-left: 280px;">
+                            <canvas width="150px" height="40px" id="captcha"></canvas>
+                        </div>
+                    </div>
+                    <br>
+                    <input type="submit" value="登录" class="btn" onclick="validate()">
+                    <br>
+                    <div id="login_copyright">
+                        Power By VidTube &copy;CopyRight 2023
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+   
+    <script src="../static/js/login.js"></script>
+</body>
+
+</html>

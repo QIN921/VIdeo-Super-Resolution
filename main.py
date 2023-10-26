@@ -41,6 +41,13 @@ def clear_folder(folder_path):
             print(f"清除文件 '{file_path}' 时出现错误：{e}")
 
 
+@app.route('/clean.js')
+def clean():
+    global m3u8
+    m3u8 = ''
+    return ""
+
+
 @app.route('/upload_2', methods=['POST'])
 def efficient():
     # 快速
@@ -70,7 +77,8 @@ def efficient():
     cap = cv2.VideoCapture(file_input)
     frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
     frame_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-    socketio.emit("video_size_2", {'data': f"Turn video of {frame_width}x{frame_height} into {frame_width*selected_scale}x{frame_height*selected_scale}"})
+    socketio.emit("video_size_2", {'data': f"Turn video of {frame_width}x{frame_height} into "
+                                           f"{frame_width*selected_scale}x{frame_height*selected_scale}"})
 
     process = subprocess.run(
         f"ffmpeg -i {file_input} -c:a aac -c:v libx264 -force_key_frames \"expr:gte(t,n_forced*1)\" -f segment "
@@ -159,7 +167,8 @@ def quality():
     
     img = cv2.imread('./data/frame/00001.jpg', cv2.IMREAD_COLOR)
     # print('Image size: {} x {}'.format(img.shape[1], img.shape[0]))
-    socketio.emit("video_size", {'data': f"Turn video of {img.shape[1]}x{img.shape[0]} into {img.shape[1]*4}x{img.shape[0]*4}"})
+    socketio.emit("video_size", {'data': f"Turn video of {img.shape[1]}x{img.shape[0]} into "
+                                         f"{img.shape[1]*4}x{img.shape[0]*4}"})
     # print("视频抽帧完成！")
     socketio.emit('server_response', {'data': "视频抽帧完成"})
 
@@ -186,7 +195,7 @@ def quality():
 def index():
     # with open('./templates/index.html', encoding='utf-8') as f:
     #     return "".join(f.readlines())
-    return render_template('index.html')
+    return render_template('login.html')
 
 
 # 后端程序
