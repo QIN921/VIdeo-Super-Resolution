@@ -1,5 +1,5 @@
 import shutil
-from flask import Flask, request, render_template, Response
+from flask import Flask, request, render_template, Response, jsonify
 from flask_socketio import SocketIO
 import os
 from threading import Lock
@@ -7,6 +7,7 @@ import subprocess
 import re
 import cv2
 from realbasicvsr.inference_realbasicvsr import realbasicvsr
+import requests
 
 
 app = Flask(
@@ -183,12 +184,44 @@ def quality():
     socketio.emit("server_response", {'data': "视频帧压缩为视频完成"})
     socketio.emit('server_response', {'data': f"RealBasicVSR_x4超分倍结果保存至./data/output.mp4"})
 
-    #  直接放大，方便对比效果
+    # 直接放大，方便对比效果
     os.system("ffmpeg -i ./data/frame/%05d.jpg -vf scale=iw*4:ih*4 ./data/direct/%05d.jpg -y")
     socketio.emit('server_response', {'data': "视频抽帧结果保存至./data/frame"})
     socketio.emit('server_response', {'data': "FFmpeg直接放大结果保存至./data/direct"})
 
-    return f"已对 {filename} 进行超分，并保存到 ./data/output"
+    # 视频帧和超分帧逐个上传到图床
+    def number_of_frame(file_name):
+        return int(os.path.splitext(file_name)[0])
+
+    origin_frames = sorted(os.listdir('./data/direct'), key=number_of_frame)
+    super_frames = sorted(os.listdir('./data/output'), key=number_of_frame)
+
+    res = {
+        'data': {
+            'direct_frame_urls': [],
+            'super_frame_urls': [],
+        }
+    }
+    sm_header = {'Authorization': 'Mi7GSxQSANdxqMDevfrGspvVq5jPmmXH'}
+    sm_url = 'https://sm.ms/api/v2/upload'
+    socketio.emit('server_response', {'data': "正在将处理结果上传至图床……"})
+    try:
+        for frame in origin_frames:
+            sm_res = requests.post(sm_url, files={'smfile': open(frame, 'rb')}, headers=sm_header).json()
+            res['data']['direct_frame_urls'].append(sm_res['data']['url'])
+        for frame in super_frames:
+            sm_res = requests.post(sm_url, files={'smfile': open(frame, 'rb')}, headers=sm_header).json()
+            res['data']['super_frame_urls'].append(sm_res['data']['url'])
+        msg = '处理结果上传成功。'
+        socketio.emit('server_response', {'data': msg})
+        res['code'] = 0
+    except requests.exceptions:
+        msg = '处理结果上传失败。'
+        socketio.emit('server_response', {'data': msg})
+        res['code'] = -1
+
+    res['msg'] = msg
+    return jsonify(res)
 
 
 @app.route("/")
