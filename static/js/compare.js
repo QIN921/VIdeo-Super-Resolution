@@ -21,7 +21,12 @@ form.addEventListener('submit', function(event) {
         body: formData
     }).then(response => response.text())
       .then(data => {
-          result.textContent = data;
+          // result.textContent = data;
+          let response = JSON.parse(data);
+          leftImageFiles = response.data?.direct_frame_urls ?? [];
+          rightImageFiles = response.data?.super_frame_urls ?? [];
+          showImage('left');
+          showImage('right');
       });
 });
 
@@ -78,7 +83,7 @@ function showImage(side) {
     }
 
     if (imageFiles.length === 0) {
-        previewDiv.innerHTML = '没有选择图片文件夹或文件夹内没有图片';
+        previewDiv.innerHTML = '下载帧结果失败';
         return;
     }
     
