@@ -21,7 +21,14 @@ form.addEventListener('submit', function(event) {
         body: formData
     }).then(response => response.text())
       .then(data => {
-          result.textContent = data;
+        //   result.textContent = data;
+        let response = JSON.parse(data.trim());
+        console.log(response);
+        leftImageFiles = response.data?.direct_frame_urls ?? [];
+        console.log(leftImageFiles);
+        rightImageFiles = response.data?.super_frame_urls ?? [];
+        showImage('left');
+        showImage('right');
       });
 });
 
@@ -30,8 +37,8 @@ let rightFileIndex = 0;
 let leftImageFiles = [];
 let rightImageFiles = [];
 
-const leftFolderUploadInput = document.getElementById('leftFolderUpload');
-const rightFolderUploadInput = document.getElementById('rightFolderUpload');
+// const leftFolderUploadInput = document.getElementById('leftFolderUpload');
+// const rightFolderUploadInput = document.getElementById('rightFolderUpload');
 const leftPreviewDiv = document.getElementById('leftPreview');
 const rightPreviewDiv = document.getElementById('rightPreview');
 const previousBtn = document.getElementById('previousBtn');
@@ -43,27 +50,27 @@ let scaleFactor = 0.2;
 var scrollLeft = 1220;
 var scrollTop = 700;
 
-leftFolderUploadInput.addEventListener('change', (event) => {
-    const files = Array.from(event.target.files);
-    leftImageFiles = files.filter(file => file.type.startsWith('image/'));
-    leftImageFiles.sort((a, b) => getImageIndex(a) - getImageIndex(b));  // 按照图片索引进行排序
-    leftFileIndex = 0;
-    showImage('left');      
-});
+// leftFolderUploadInput.addEventListener('change', (event) => {
+//     const files = Array.from(event.target.files);
+//     leftImageFiles = files.filter(file => file.type.startsWith('image/'));
+//     leftImageFiles.sort((a, b) => getImageIndex(a) - getImageIndex(b));  // 按照图片索引进行排序
+//     leftFileIndex = 0;
+//     showImage('left');      
+// });
 
-rightFolderUploadInput.addEventListener('change', (event) => {
-    const files = Array.from(event.target.files);
-    rightImageFiles = files.filter(file => file.type.startsWith('image/'));
-    rightImageFiles.sort((a, b) => getImageIndex(a) - getImageIndex(b));  // 按照图片索引进行排序
-    rightFileIndex = 0;
-    showImage('right');
-});
+// rightFolderUploadInput.addEventListener('change', (event) => {
+//     const files = Array.from(event.target.files);
+//     rightImageFiles = files.filter(file => file.type.startsWith('image/'));
+//     rightImageFiles.sort((a, b) => getImageIndex(a) - getImageIndex(b));  // 按照图片索引进行排序
+//     rightFileIndex = 0;
+//     showImage('right');
+// });
 
-function getImageIndex(file) {
-    const fileName = file.name.toLowerCase();
-    const match = fileName.match(/frame_(\d+)\.(png|jpg)/);
-    return match ? parseInt(match[1]) : -1;
-}
+// function getImageIndex(file) {
+//     const fileName = file.name.toLowerCase();
+//     const match = fileName.match(/frame_(\d+)\.(png|jpg)/);
+//     return match ? parseInt(match[1]) : -1;
+// }
 
 function showImage(side) {
     let imageFiles, fileIndex, previewDiv;
@@ -78,29 +85,38 @@ function showImage(side) {
     }
 
     if (imageFiles.length === 0) {
-        previewDiv.innerHTML = '没有选择图片文件夹或文件夹内没有图片';
+        previewDiv.innerHTML = '下载帧失败';
         return;
     }
     
     const file = imageFiles[fileIndex];
-    const reader = new FileReader();
-    reader.onload = function() {
-        const image = new Image();
-        image.src = reader.result;
-        image.id = 'preview-image';
-        image.style.transform = `scale(${scaleFactor})`;
-        previewDiv.innerHTML = '';
-        previewDiv.appendChild(image);
-        if (image.naturalWidth != 0) {
-            scrollTop = Math.floor(image.naturalHeight * 5 / 14);
-            scrollLeft = Math.floor(image.naturalWidth * 5 / 14);
-            console.log(scrollLeft);
-        };
-    };
     
-    reader.readAsDataURL(file);
-    previousBtn.disabled = (fileIndex === 0);
-    nextBtn.disabled = (fileIndex === imageFiles.length - 1);
+    fetch(file,{
+        method: 'get',
+        responseType: 'blob'
+    }).then(res => {     
+        return res.blob();
+    }).then(blob => {
+        let bl = new Blob([blob], {type: "image/jpeg"});
+        const reader = new FileReader();
+        reader.onload = function() {
+            const image = new Image();
+            image.src = reader.result;
+            image.id = 'preview-image';
+            image.style.transform = `scale(${scaleFactor})`;
+            previewDiv.innerHTML = '';
+            previewDiv.appendChild(image);
+            if (image.naturalWidth != 0) {
+                scrollTop = Math.floor(image.naturalHeight * 5 / 14);
+                scrollLeft = Math.floor(image.naturalWidth * 5 / 14);
+                console.log(scrollLeft);
+            };
+        };
+    
+        reader.readAsDataURL(bl);
+        previousBtn.disabled = (fileIndex === 0);
+        nextBtn.disabled = (fileIndex === imageFiles.length - 1);
+    })
 }
 
 function showPrevious() {
@@ -184,29 +200,6 @@ socket.on("server_response", function (msg) {
     console.log('message: ' + t);
     $('#messagecontainer').append(t +'<br/>');
 });
-
-socket.on("server_response_num", function (msg) {
-    //接收到后端发送过来的消息
-    var t = msg.data;
-    console.log('process: ' + t);
-    var progressBar = document.getElementById("progress");
-
-    // 计算进度百分比
-    var progressPercent = t * 100;
-    // 更新进度条宽度
-    progressBar.style.width = progressPercent + "%";
-});
-
-socket.on("video_size", function (msg) {
-    //接收到后端发送过来的消息
-    var t = msg.data;
-    console.log('size: ' + t);
-    $('#videosize').append(t +'<br/>');
-});
-
-function clearContent() {
-    document.getElementById('videosize').innerHTML = "";
-}
 
 socket.on("server_response_num", function (msg) {
     //接收到后端发送过来的消息

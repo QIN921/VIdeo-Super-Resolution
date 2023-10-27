@@ -232,6 +232,12 @@ nav {
   overflow: auto;
 }
 
+.messagecontainer_1 {
+  margin: 20px;
+  height: 80px;
+  overflow: auto;
+}
+
 .progress-cir {
   width: 100%;
   height: 20px;
@@ -246,8 +252,6 @@ nav {
   transition: width 0.3s linear;
   border: 1px solid #eee;
 }
-
-
 
 .imageContainer {
   display: flex;

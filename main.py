@@ -1,5 +1,5 @@
 import shutil
-from flask import Flask, request, render_template, Response
+from flask import Flask, request, render_template, Response, jsonify,send_from_directory
 from flask_socketio import SocketIO
 import os
 from threading import Lock
@@ -7,6 +7,9 @@ import subprocess
 import re
 import cv2
 from realbasicvsr.inference_realbasicvsr import realbasicvsr
+import requests
+from requests_toolbelt import MultipartEncoder
+from bs4 import BeautifulSoup
 
 
 app = Flask(
@@ -147,6 +150,10 @@ def video():
     return Response(m3u8, mimetype='application/vnd.apple.mpegurl')
 
 
+def number_of_frame(file_name):
+        return int(os.path.splitext(file_name)[0])
+
+
 @app.route("/upload_1", methods=['POST'])
 def quality():
     if 'file' not in request.files:
@@ -167,8 +174,7 @@ def quality():
     
     img = cv2.imread('./data/frame/00001.jpg', cv2.IMREAD_COLOR)
     # print('Image size: {} x {}'.format(img.shape[1], img.shape[0]))
-    socketio.emit("video_size", {'data': f"Turn video of {img.shape[1]}x{img.shape[0]} into "
-                                         f"{img.shape[1]*4}x{img.shape[0]*4}"})
+    socketio.emit("video_size", {'data': f"Turn video of {img.shape[1]}x{img.shape[0]} into {img.shape[1]*4}x{img.shape[0]*4}"})
     # print("视频抽帧完成！")
     socketio.emit('server_response', {'data': "视频抽帧完成"})
 
@@ -177,18 +183,47 @@ def quality():
     #           "./realbasicvsr/checkpoints/RealBasicVSR_x4.pth ./data/frame ./data/output --max_seq_len 8")
     realbasicvsr(socketio)
     socketio.emit('server_response', {'data': "视频超分完成"})
-    socketio.emit('server_response', {'data': "RealBasicVSR_x4超分结果保存至./data/output"})
+    # socketio.emit('server_response', {'data': "RealBasicVSR_x4超分结果保存至./data/output"})
 
     os.system(f"ffmpeg -i ./data/output/%05d.png -pix_fmt yuv420p -c:v libx264 ./data/output.mp4 -y")
-    socketio.emit("server_response", {'data': "视频帧压缩为视频完成"})
-    socketio.emit('server_response', {'data': f"RealBasicVSR_x4超分倍结果保存至./data/output.mp4"})
+    # socketio.emit("server_response", {'data': "视频帧压缩为视频完成"})
+    # socketio.emit('server_response', {'data': f"RealBasicVSR_x4超分倍结果保存至./data/output.mp4"})
 
-    #  直接放大，方便对比效果
+    # 直接放大，方便对比效果
     os.system("ffmpeg -i ./data/frame/%05d.jpg -vf scale=iw*4:ih*4 ./data/direct/%05d.jpg -y")
-    socketio.emit('server_response', {'data': "视频抽帧结果保存至./data/frame"})
-    socketio.emit('server_response', {'data': "FFmpeg直接放大结果保存至./data/direct"})
+    # socketio.emit('server_response', {'data': "视频抽帧结果保存至./data/frame"})
+    # socketio.emit('server_response', {'data': "FFmpeg直接放大结果保存至./data/direct"})
+    socketio.emit('server_response', {'data': "正在自动上传处理后图像！"})
 
-    return f"已对 {filename} 进行超分，并保存到 ./data/output"
+    origin_frames = sorted(os.listdir('./data/direct'), key=number_of_frame)
+    for i in range(len(origin_frames)):
+        origin_frames[i] = '/direct/' + origin_frames[i]
+    print(origin_frames)
+    super_frames = sorted(os.listdir('./data/output'), key=number_of_frame)
+    for i in range(len(super_frames)):
+        super_frames[i] = '/output/' + super_frames[i]
+
+    res = {
+        'data': {
+            'direct_frame_urls': origin_frames,
+            'super_frame_urls': super_frames,
+        }
+    }
+    print(res)
+    return jsonify(res)
+
+UPLOAD_PATH = os.path.join(os.path.dirname(__file__),'data')
+
+@app.route('/direct/<filename>/')
+def download(filename):
+    path = UPLOAD_PATH + '/direct'
+    print(path)
+    return send_from_directory(path, filename)
+
+@app.route('/output/<filename>/')
+def download_1(filename):
+    path = UPLOAD_PATH + '/output'
+    return send_from_directory(path, filename)
 
 
 @app.route("/")
