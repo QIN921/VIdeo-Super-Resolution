@@ -7,9 +7,9 @@ import subprocess
 import re
 import cv2
 from realbasicvsr.inference_realbasicvsr import realbasicvsr
-import requests
-from requests_toolbelt import MultipartEncoder
-from bs4 import BeautifulSoup
+# import requests
+# from requests_toolbelt import MultipartEncoder
+# from bs4 import BeautifulSoup
 
 
 app = Flask(
