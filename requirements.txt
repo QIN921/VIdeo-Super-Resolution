@@ -1,0 +1,9 @@
+Flask==3.0.0
+Flask_SocketIO==5.3.6
+mmcv_full==1.7.1
+mmedit==0.16.1
+numpy==1.23.1
+numpy==1.23.2
+opencv_python==4.6.0.66
+torch==1.12.1
+tqdm==4.65.2

@@ -7,10 +7,6 @@ import subprocess
 import re
 import cv2
 from realbasicvsr.inference_realbasicvsr import realbasicvsr
-# import requests
-# from requests_toolbelt import MultipartEncoder
-# from bs4 import BeautifulSoup
-
 
 app = Flask(
     __name__,
@@ -230,7 +226,7 @@ def download_1(filename):
 def index():
     # with open('./templates/index.html', encoding='utf-8') as f:
     #     return "".join(f.readlines())
-    return render_template('login.html')
+    return render_template('home.html')
 
 
 # 后端程序
@@ -273,4 +269,4 @@ def handle_message(message):
 
 if __name__ == '__main__':
     # app.run()
-    socketio.run(app, host='127.0.0.1', port=8083, allow_unsafe_werkzeug=True, debug=True)
+    socketio.run(app, host='0.0.0.0', port=8083, allow_unsafe_werkzeug=True, debug=True)

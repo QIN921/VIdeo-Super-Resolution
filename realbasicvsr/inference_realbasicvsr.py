@@ -78,7 +78,6 @@ def realbasicvsr(socktio):
     socktio.emit('server_response', {'data': "模型加载中，请稍候"})
     model = init_model(args.config, args.checkpoint)
     
-
     # read images
     file_extension = os.path.splitext(args.input_dir)[1]
     if file_extension == '':  # input is a directory

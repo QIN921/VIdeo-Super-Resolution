@@ -224,6 +224,7 @@ function validate() {
             return;
             })
             .catch(error => console.error(error));
+        location.replace('/templates/home.html')  
         return;
     }
 }
